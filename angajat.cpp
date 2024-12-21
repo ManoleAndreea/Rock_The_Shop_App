@@ -62,7 +62,7 @@ int angajat::ani_experienta() const
 {
     time_t t=time(nullptr);
     tm data_curenta=*localtime(&t);
-    return data_curenta.tm_year-data_angajare.tm_year;
+    return data_curenta.tm_year+1900-data_angajare.tm_year;
 }
 
 void angajat::set_nume(string & num)
