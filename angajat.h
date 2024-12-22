@@ -2,6 +2,7 @@
 #include <string>
 #include <ctime>
 #pragma once
+#include "validare_cnp.h"
 
 using namespace std;
 
@@ -28,6 +29,8 @@ class angajat
         static bool validare_cnp(string&);
         virtual bool verificare_zi_nastere() const;
         virtual angajat& operator=(const angajat&);
+        virtual string get_cnp() const;
+        virtual int get_id() const;
         
 
 
