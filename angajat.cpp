@@ -50,6 +50,7 @@ int angajat::ani_experienta() const
 void angajat::set_nume(string & num)
 {
     this->nume=num;
+    /// ana are mere si andra ar putea sa ma aiba pe mine daca si ar dori asta cu adevarat offff
 }
 
 void angajat:: afisare() const

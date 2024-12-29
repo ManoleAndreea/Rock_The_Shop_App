@@ -2,9 +2,12 @@
 #include "operatorr.h"
 #include "asistent.h"
 #include "stergere.h"
+#include "articol_vestimentar.h"
 #include <fstream>
 #include <vector>
 #include <typeinfo>
+
+
 
 ifstream fin("angajati.txt");
 
@@ -386,12 +389,14 @@ int main()
     {
         populare_angajati();
         ecran_principal_logo();
-        meniu_principal();
+        //meniu_principal();
         int var;
-        cin >> var;
-        if(var==1)
-            gestiune_angajati();
+       // cin >> var;
+       // if(var==1)
+        //    gestiune_angajati();
 
+        articol_vestimentar a("tricou", 20, 1, "negru", "gucci");
+        a.afisare();
 
     }
     catch(const exception& e)
