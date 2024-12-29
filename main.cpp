@@ -1,17 +1,15 @@
-#include "manager.h"
-#include "operatorr.h"
-#include "asistent.h"
+
 #include "stergere.h"
-#include "articol_vestimentar.h"
 #include <fstream>
 #include <vector>
 #include <typeinfo>
+#include "gestiune.h"
 
 
 
 ifstream fin("angajati.txt");
 
-vector<angajat*> angajati;
+gestiune<angajat*> angajati;
 
 
 void populare_angajati()
@@ -25,7 +23,7 @@ void populare_angajati()
             string nume, prenume, cnp;
             tm data;
             fin >> nume >> prenume >> cnp >> data.tm_year >> data.tm_mon >> data.tm_mday;
-            angajati.push_back(new asistent(nume, prenume, cnp, data));
+            angajati.adauga(new asistent(nume, prenume, cnp, data));
         }
         else
             if(tip=="Manager")
@@ -33,7 +31,7 @@ void populare_angajati()
                 string nume, prenume, cnp;
                 tm data;
                 fin >> nume >> prenume >> cnp >> data.tm_year >> data.tm_mon >> data.tm_mday;
-                angajati.push_back(new manager(nume, prenume, cnp, data));
+                angajati.adauga(new manager(nume, prenume, cnp, data));
             }
             else
                 if(tip=="Operator")
@@ -42,15 +40,14 @@ void populare_angajati()
                     tm data;
                     fin >> nume >> prenume >> cnp >> data.tm_year >> data.tm_mon >> data.tm_mday;
                     operatorr* op = new operatorr(nume, prenume, cnp, data);
-                    angajati.push_back(op);
+                    angajati.adauga(op);
                     op->adaugare_comanda_procesata(1000);
                 }
                 else
                     cout <<"Lista nu e buna!"<<endl;
     }
 
-    for(int i=0; i<10; i++)
-        angajati[i]->afisare();
+    angajati.afisare();
 }
 
 void ecran_principal_logo()
@@ -154,13 +151,13 @@ void adaugare_angajat()
         cin >> data.tm_year >> data.tm_mon >> data.tm_mday;
 
         if(tip=="Operator")
-                angajati.push_back(new operatorr(nume, prenume, cnp, data));
+                angajati.adauga(new operatorr(nume, prenume, cnp, data));
         else
             if(tip=="Manager")
-                angajati.push_back(new manager(nume, prenume, cnp, data));
+                angajati.adauga(new manager(nume, prenume, cnp, data));
             else
                 if(tip=="Asistent")
-                    angajati.push_back(new asistent(nume, prenume, cnp, data));
+                    angajati.adauga(new asistent(nume, prenume, cnp, data));
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
         
 
@@ -169,24 +166,11 @@ void adaugare_angajat()
 void stergere_angajat()
 {
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
-    int contor_manageri=count_if(angajati.begin(), angajati.end(), [](const angajat*a)
-    {
-        return typeid(*a)==typeid(manager);
-    });
-    int contor_asistenti=count_if(angajati.begin(), angajati.end(), [](const angajat*a)
-    {
-        return typeid(*a)==typeid(asistent);
-    });
-    int contor_operatori=count_if(angajati.begin(), angajati.end(), [](const angajat*a)
-    {
-        return typeid(*a)==typeid(operatorr);
-    });
-
-    cout << contor_manageri << ' '<< contor_asistenti << ' ' << contor_operatori<<endl ;
+  
+ 
     cout <<"\n\n      Doresti sa stergi un angajat dupa CNP(1), sau dupa ID(2)? ";
     int tip;
     cin >> tip;
-    vector<angajat*>::iterator it;
     if(tip==1)
     {
         cout <<"\n\n      Introdu CNP:  ";
@@ -194,45 +178,20 @@ void stergere_angajat()
         cin >> cnp;
         if(::validare_cnp(cnp)==0)
             throw invalid_argument("CNP INVALID!!");
-        stergere criteriu("CNP", cnp);
-        it=find_if(angajati.begin(), angajati.end(), criteriu);
+            string criteriu="CNP";
+        angajati.sterge(criteriu, cnp);
+        
     }
     else if(tip==2)
     {
         cout <<"\n\n      Introdu ID:  ";
         string id;
         cin >> id;
-        stergere criteriu("ID", id);
-        it=find_if(angajati.begin(), angajati.end(), criteriu);
+        string criteriu="ID";
+        angajati.sterge(criteriu, id);
     }
         
-        if(it==angajati.end())
-            cout << "                       ANGAJATUL NU A FOST GASIT!\n";
-        else
-        {
-
-            (*it)->afisare();
-            if(dynamic_cast<manager*>(*it) && contor_manageri==1)
-                cout << "NU PUTETI STERGE MANAGERUL! Magazinul trebuie sa aiba cel putin un manager.\n";
-            else
-                if(dynamic_cast<operatorr*>(*it) && contor_operatori==3)
-                    cout << "NU PUTETI STERGE OPERATORUL! Magazinul trebuie sa aiba minim 3 operatori\n";
-                else
-                    if(dynamic_cast<asistent*>(*it) && contor_asistenti==1)
-                        cout << "NU PUTETI STERGE ASISTENTUL! Magazinul trebuie sa aiba cel putin un asistent.\n";
-                    else
-                        {
-                            cout << "A FOST STERS! \n";
-                            angajati.erase(it);
-                            cout <<"\n\n      Lista actualizata:  \n";
-                            cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
-
-                            for(auto& at:angajati)
-                                at->afisare();
-
-                        }
-
-        }
+        
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
 
     
@@ -254,12 +213,8 @@ void detalii_angajat()
         cin >> cnp;
         if(::validare_cnp(cnp)==0)
             throw invalid_argument("CNP INVALID!!");
-        stergere criteriu("CNP", cnp);
-        auto it=find_if(angajati.begin(), angajati.end(), criteriu);
-        if(it==angajati.end())
-            cout << "                ANGAJATUL NU A FOST GASIT!\n";
-        else
-            (*it)->afisare();
+        auto it=angajati.cauta("CNP", cnp);
+        it->afisare();
          
         
     }
@@ -268,14 +223,8 @@ void detalii_angajat()
         cout <<"\n\n      Introdu ID:  ";
         string id;
         cin >> id;
-        stergere criteriu("ID", id);
-        auto it=find_if(angajati.begin(), angajati.end(), criteriu);
-        if(it==angajati.end())
-            cout << "ANGAJATUL NU A FOST GASIT!\n";
-        else
-        {
-            (*it)->afisare();
-        }
+        auto it=angajati.cauta("ID", id);
+        it->afisare();
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
 
 
@@ -295,53 +244,28 @@ void modificare_angajat()
     if(tip==1)
     {
         cout <<"\n\n      Introdu CNP:  ";
-        string cnp;
+        string cnp, num;
         cin >> cnp;
-        string nume;
-        cout <<"\n\n      Introdu noul Nume:  ";
-        cin >> nume;
         if(::validare_cnp(cnp)==0)
             throw invalid_argument("CNP INVALID!!");
-        stergere criteriu("CNP", cnp);
-        auto it=find_if(angajati.begin(), angajati.end(), criteriu);
-        if(it==angajati.end())
-            cout << "ANGAJATUL NU A FOST GASIT!\n";
-        else
-        {
-            (*it)->afisare();
-            cout << "A FOST REDENUMIT \n";
-            (*it)->set_nume(nume);
-            cout <<"\n\n      Lista actualizata:  \n";
-	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
-
-            for(auto& at:angajati)
-                at->afisare();
-        }
+        cout << "\n\n      Introdu noul nume: ";
+        cin >> num;
+        auto it=angajati.cauta("CNP", cnp);
+        it->set_nume(num);
+        it->afisare();
+         
         
     }
     else if(tip==2)
     {
         cout <<"\n\n      Introdu ID:  ";
-        string id;
+        string id, num;
         cin >> id;
-        string nume;
-        cout <<"\n\n      Introdu noul Nume:  ";
-        cin >> nume;
-        stergere criteriu("ID", id);
-        auto it=find_if(angajati.begin(), angajati.end(), criteriu);
-        if(it==angajati.end())
-            cout << "ANGAJATUL NU A FOST GASIT!\n";
-        else
-        {
-            (*it)->afisare();
-            cout << "A FOST REDENUMIT \n";
-            (*it)->set_nume(nume);
-            cout <<"\n\n      Lista actualizata:  \n";
-	    cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
-        
-            for(auto& at:angajati)
-                at->afisare();
-        }
+        cout << "\n\n      Introdu noul nume: ";
+        cin >> num;
+        auto it=angajati.cauta("ID", id);
+        it->set_nume(num);
+        it->afisare();
     }
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
 
@@ -375,9 +299,7 @@ void gestiune_angajati()
                     if(var==5)
                     {
                         cout <<"\n\n      Lista angajatilor:  ";
-
-                        for(auto& at:angajati)
-                            at->afisare();
+                        angajati.afisare();
                     }
     }
 
@@ -389,11 +311,11 @@ int main()
     {
         populare_angajati();
         ecran_principal_logo();
-        //meniu_principal();
+        meniu_principal();
         int var;
-       // cin >> var;
-       // if(var==1)
-        //    gestiune_angajati();
+        cin >> var;
+        if(var==1)
+            gestiune_angajati();
 
         articol_vestimentar a("tricou", 20, 1, "negru", "gucci");
         a.afisare();
