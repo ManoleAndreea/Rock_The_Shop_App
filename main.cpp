@@ -8,8 +8,62 @@
 
 
 ifstream fin("angajati.txt");
+ifstream finn("produse.txt");
 
 gestiune<angajat*> angajati;
+gestiune<produs*>produse;
+
+void populare_produse()
+{
+    for(int i=0; i<7; i++)
+    {
+        string den;
+        float pret;
+        int stoc;
+        string tip;
+        finn >> tip;
+        finn>> den >> pret >> stoc;
+        if(tip=="Articol_Vestimentar")
+        {
+            string cul, marca;
+            finn >> cul >> marca;
+            produse.adauga(new articol_vestimentar(den, pret, stoc, cul, marca));
+        }
+        else
+            if(tip=="Disc")
+            {
+                string casa, trupa, album, tipp;
+                tm data;
+                int an, luna, zi;
+                finn >> casa >> trupa >> album >> tipp >> an >> luna >> zi;
+                luna--;
+                an-=1900;
+                data.tm_year=an;
+                data.tm_mday=zi;
+                data.tm_mon=luna;
+                produse.adauga(new disc(den, pret, stoc, casa, trupa, album, tip, data));        
+            }
+            else
+                if(tip=="Disc_Vintage")
+                {
+                    string casa, trupa, album, tipp;
+                    tm data;
+                    int an, luna, zi;
+                    finn >> casa >> trupa >> album >> tipp >> an >> luna >> zi;
+                    luna--;
+                    an-=1900;
+                    data.tm_year=an;
+                    data.tm_mday=zi;
+                    data.tm_mon=luna;
+                    bool mint;
+                    int coeficient;
+                    finn >> mint >> coeficient;
+                    produse.adauga(new disc_vintage(den, pret, stoc, casa, trupa, album, tip, data, mint, coeficient));  
+                }
+
+    }
+    produse.afisare();
+}
 
 
 void populare_angajati()
@@ -305,20 +359,161 @@ void gestiune_angajati()
 
 }
 
+void adaugare_produs()
+{
+    cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+
+    cout <<"\n\n      Introdu tipul de produs: ";
+    string tip;
+    cin >> tip;
+    if(tip=="Articol_Vestimentar")
+    {
+        cout <<"\n\n      Introdu denumirea, pretul, stocul, culoarea si marca: ";
+        string denumire, culoare, marca;
+        float pret;
+        int stoc;
+        cin >> denumire >> pret >> stoc >> culoare >> marca;
+        produse.adauga(new articol_vestimentar(denumire, pret, stoc, culoare, marca));
+    }
+    else
+        if(tip=="Disc")
+        {
+            cout <<"\n\n      Introdu denumirea, pretul, stocul, casa, trupa, album, data de la lansare(AN, LUNA, ZI), tipul(cd sau vinil): ";
+            string den, casa, trupa, album, tip;
+            int an, luna, zi, stoc;
+            float pret;
+            cin >> den >> pret >> stoc >> casa >> trupa >> album >> an >> luna >> zi >> tip;
+            luna--;
+            an-=1900;
+            tm data;
+            data.tm_year=an;
+            data.tm_mday=zi;
+            data.tm_mon=luna;
+            produse.adauga(new disc(den, pret, stoc, casa, trupa, album, tip, data));
+
+       }
+       else
+            if(tip=="Disc_Vintage")
+            {
+                cout <<"\n\n      Introdu denumirea, pretul, stocul, casa, trupa, album, data de la lansare(AN, LUNA, ZI), tipul(cd sau vinil), daca este mint(1 sau 0), si coeficientul de raritate: ";
+                string den, casa, trupa, album, tip;
+                int an, luna, zi, stoc, coef;
+                float pret;
+                bool mint;
+                cin >> den >> pret >> stoc >> casa >> trupa >> album >> an >> luna >> zi >> tip >> mint >> coef;
+                luna--;
+                an-=1900;
+                tm data;
+                data.tm_year=an;
+                data.tm_mday=zi;
+                data.tm_mon=luna;
+                produse.adauga(new disc_vintage(den, pret, stoc, casa, trupa, album, tip, data, mint, coef));
+            }
+
+
+
+}
+void stergere_produs()
+{
+	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+    cout <<"\n\n      Introdu Codul unic al produsului pe care vrei sa il stergi:  ";
+    int cod;
+    cin >> cod;
+    produse.sterge("COD", to_string(cod));
+}
+void detalii_produse()
+{
+	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+
+    cout <<"\n\n      Introdu Codul unic:  ";
+    int cod;
+    cin >> cod;
+    auto it=produse.cauta("COD", to_string(cod));
+    it->afisare();
+
+
+}
+void modificare_produs()
+{
+	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+    cout <<"\n\n      Introdu Codul unic al produsului pe care vrei sa l modifici:  ";
+    int cod;
+    cin >> cod;
+    auto it=produse.cauta("COD", to_string(cod));
+    cout <<"\n\n      Doresti sa modifici denumirea(1) sau pretul(2)?  ";
+    int tip;
+    cin >> tip;
+    if(tip==1)
+    {
+        cout <<"\n\n      Introdu noua denumire:  ";
+        string denumire;
+        cin >> denumire;
+        it->set_denumire(denumire);
+        cout << "\n\n     Produsul a fost modificat!\n";
+        it->afisare();
+        
+    }
+    else
+        if(tip==2)
+        {
+            cout <<"\n\n      Introdu noul pret:  ";
+            float pret;
+            cin >> pret;
+            it->set_pret(pret);
+            cout << "\n\n     Produsul a fost modificat!\n";
+            it->afisare();
+        }
+
+}
+
+void gestiune_produse()
+{
+    int var=1;
+    while(var)
+    {
+	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+
+    cout << " \n\n       Doresti sa:\n\n      - Adaugi(1) un nou produs?\n      - Sa stergi(2) un produs?\n      - Sa modifici(3) un produs?\n      - Sau sa aflii mai multe detalii(4) despre un produs?\n      - Poate doresti sa vezi lista(5) cu toate produsele de la Rock the Shop?\n      -Doresti sa te intorci la meniul principal?(0) \n";
+
+    cin >> var;
+
+	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+    if(var==1)
+        adaugare_produs();
+    else
+        if(var==2)
+            stergere_produs();
+        else 
+            if(var==3)
+                modificare_produs();
+            else
+                if(var==4)
+                detalii_produse();
+                else
+                    if(var==5)
+                    {
+                        cout <<"\n\n      Lista produselor:  ";
+                        produse.afisare();
+                    }
+    }
+
+}
 int main()
 {
     try
     {
         populare_angajati();
+        populare_produse();
         ecran_principal_logo();
         meniu_principal();
         int var;
         cin >> var;
         if(var==1)
             gestiune_angajati();
+        else
+            if(var==2)
+                gestiune_produse();
 
-        articol_vestimentar a("tricou", 20, 1, "negru", "gucci");
-        a.afisare();
 
     }
     catch(const exception& e)

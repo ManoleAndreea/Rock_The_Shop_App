@@ -44,6 +44,17 @@ produs::~produs()
 void produs:: afisare() const
 {
     float pret=calcul_pret_final();
-    cout <<"Cod: " << cod_unic << ", Denumire: " << denumire <<", Pret: " << pret << ", Stoc: "<< stoc << endl; 
+    cout <<"Cod: " << cod_unic << ", Denumire: " << denumire <<", Pret de baza: " << pret_baza <<", Pret cu servicii de livrare si/sau impachetare: "<< pret << ", Stoc: "<< stoc << endl; 
+    cout << endl;
      
+}
+
+void produs::set_denumire(string& den)
+{
+    this->denumire=den;
+}
+
+void produs::set_pret(float pre)
+{
+    this->pret_baza=pre;
 }

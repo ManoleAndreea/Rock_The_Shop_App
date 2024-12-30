@@ -22,4 +22,8 @@ class produs
         virtual void afisare() const=0;
         virtual float calcul_pret_final() const=0;
         int get_cod() const;
+        void set_denumire(string &);
+        void set_pret(float);
+
+
 };

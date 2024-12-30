@@ -47,7 +47,7 @@ class gestiune
                     if constexpr(is_base_of<produs, typename remove_pointer<T>::type>::value) 
                     {
                         if(criteriu=="COD")
-                        return element->get_cod()==valoare;
+                        return to_string(element->get_cod())==valoare;
                     }
                         return false;
             };
@@ -76,7 +76,7 @@ class gestiune
                     if constexpr(is_base_of<produs, typename remove_pointer<T>::type>::value) 
                     {
                         if(criteriu=="COD")
-                        return element->get_cod()==valoare;
+                        return to_string(element->get_cod())==valoare;
                     }
                         return false;
             };
@@ -122,6 +122,42 @@ class gestiune
                             cout << "NU PUTETI STERGE ASISTENTUL! Magazinul trebuie să aibă cel puțin un asistent.\n";
                         return;
                         }
+            }
+            else
+            {
+                int numar_articole_vestimentare=numara([](T element)
+                {
+                    return dynamic_cast<articol_vestimentar*>(element)!=nullptr;
+                });
+
+                int numar_discuri=numara([](T element) 
+                {
+                    return dynamic_cast<disc*>(element)!=nullptr;
+                });
+
+                int numar_discuri_vintage=numara([](T element) 
+                {
+                    return dynamic_cast<disc_vintage*>(element)!=nullptr;
+                });
+
+                if(dynamic_cast<articol_vestimentar*>(*it) && numar_articole_vestimentare==2)
+                {
+                    cout << "NU PUTETI STERGE ARTICOLUL VESTIMENTAR! Magazinul trebuie să aibă cel puțin doua articole vestimentare.\n";
+                    return;
+                } 
+                else 
+                    if(dynamic_cast<disc*>(*it) && numar_discuri==2) 
+                    {
+                        cout << "NU PUTETI STERGE DISCUL! Magazinul trebuie să aibă minim 2 discuri.\n";
+                        return;
+                    }
+                    else 
+                        if(dynamic_cast<disc_vintage*>(*it) && numar_discuri_vintage==2) 
+                        {
+                            cout << "NU PUTETI STERGE DISCUL VINTAGE! Magazinul trebuie să aibă cel puțin 2 discuri vintage.\n";
+                        return;
+                        }
+
             }
 
             delete *it;
