@@ -15,5 +15,6 @@ class disc: public produs
         disc(const string&, float, int, const string&, const string&, const string&, const string&, tm&);
         float calcul_pret_final() const;
         void afisare() const;
+        disc* copie() const;
 };
 

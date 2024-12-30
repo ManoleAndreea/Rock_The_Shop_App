@@ -1,17 +1,18 @@
-#include "articol_vestimentar.h"
-#include "disc.h"
-#include "disc_vintage.h"
-#include "asistent.h"
 #include "operatorr.h"
+#include "asistent.h"
 #include "manager.h"
+#include "comanda.h"
 #include <iostream>
+#include <fstream>
+#include <vector>
+
 
 
 
 
 int main() {
     try {
-        // Testare pentru clasa "articol_vestimentar"
+        
         articol_vestimentar av("tricou", 50.0, 10, "negru", "Nike");
         articol_vestimentar av_copy(av); // Test constructor copiere
         articol_vestimentar av_default; // Test constructor fara parametri
@@ -82,6 +83,68 @@ int main() {
         std::cout << "Salariu: " << m.calcul_salariu() << " RON\n";
         m_copy.afisare();
         m_default.afisare();
+    vector<produs*>produse;
+    tm date;
+    date.tm_hour=14;
+    date.tm_min=30;
+    date.tm_mday=15;
+    date.tm_mon=6;
+    ifstream finn("produse.txt");
+    for(int i=0; i<7; i++)
+    {
+        string den;
+        float pret;
+        int stoc;
+        string tip;
+        finn >> tip;
+        finn>> den >> pret >> stoc;
+        if(tip=="Articol_Vestimentar")
+        {
+            string cul, marca;
+            finn >> cul >> marca;
+            produse.push_back(new articol_vestimentar(den, pret, stoc, cul, marca));
+        }
+        else
+            if(tip=="Disc")
+            {
+                string casa, trupa, album, tipp;
+                tm data;
+                int an, luna, zi;
+                finn >> casa >> trupa >> album >> tipp >> an >> luna >> zi;
+                luna--;
+                an-=1900;
+                data.tm_year=an;
+                data.tm_mday=zi;
+                data.tm_mon=luna;
+                produse.push_back(new disc(den, pret, stoc, casa, trupa, album, tip, data));        
+            }
+            else
+                if(tip=="Disc_Vintage")
+                {
+                    string casa, trupa, album, tipp;
+                    tm data;
+                    int an, luna, zi;
+                    finn >> casa >> trupa >> album >> tipp >> an >> luna >> zi;
+                    luna--;
+                    an-=1900;
+                    data.tm_year=an;
+                    data.tm_mday=zi;
+                    data.tm_mon=luna;
+                    bool mint;
+                    int coeficient;
+                    finn >> mint >> coeficient;
+                    produse.push_back(new disc_vintage(den, pret, stoc, casa, trupa, album, tip, data, mint, coeficient));  
+                }
+
+    }
+    comanda c2(date, produse);
+    c2.afisare();
+    comanda c3(c2);
+    c3.afisare();
+    comanda c4;
+    c4=c2;
+    c4.afisare();
+
 
     } catch (const std::exception &e) {
         std::cerr << "Eroare: " << e.what() << "\n";

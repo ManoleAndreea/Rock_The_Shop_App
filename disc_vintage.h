@@ -10,4 +10,5 @@ class disc_vintage: public disc
         disc_vintage(const string&, float, int, const string&, const string&, const string&, const string&, tm&, bool, int);
         float calcul_pret_final() const;
         void afisare() const;
+        disc_vintage* copie() const;
 };

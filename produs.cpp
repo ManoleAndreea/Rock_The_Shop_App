@@ -58,3 +58,7 @@ void produs::set_pret(float pre)
 {
     this->pret_baza=pre;
 }
+float produs::get_pret_baza() const
+{
+    return pret_baza;
+}

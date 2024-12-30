@@ -21,3 +21,8 @@ void disc::afisare() const
     cout << "Tip: " << tip << ", Casa: " << casa_disc << ", Trupa: " << trupa << ", Data punere in vanzare: " << data_vanzare.tm_year+1900 <<" - "<< data_vanzare.tm_mon+1 << " - " << data_vanzare.tm_mday<< ", ";
     produs::afisare();
 }
+
+disc* disc::copie() const
+{
+    return new disc(*this);
+}

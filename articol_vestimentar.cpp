@@ -21,3 +21,8 @@ void articol_vestimentar::afisare() const
     cout << "Culoarea: "<<culoare<<", Marca: "<< marca<<", ";
     produs::afisare();
 }
+
+articol_vestimentar* articol_vestimentar:: copie() const
+{
+    return new articol_vestimentar(*this);
+}

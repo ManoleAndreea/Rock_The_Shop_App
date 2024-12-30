@@ -26,3 +26,9 @@ void disc_vintage::afisare() const
     cout <<"Are coeficientul de raritate: " << coeficient_raritate << ", ";
     disc::afisare();
 }
+
+
+disc_vintage* disc_vintage::copie() const
+{
+    return new disc_vintage(*this);
+}
