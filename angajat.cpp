@@ -81,3 +81,8 @@ int angajat::get_id() const
 {
     return id;
 }
+
+string angajat::get_nume() const
+{
+    return nume;
+}

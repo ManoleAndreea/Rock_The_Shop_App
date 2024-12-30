@@ -1,12 +1,13 @@
 #include "comanda.h"
 
 int comanda::urmatorul_id=1;
+
 comanda::comanda():id_comanda(urmatorul_id++)
 {
 
 }
 
-comanda::comanda(const comanda& copie):id_comanda(urmatorul_id++)
+comanda::comanda(const comanda& copie):id_comanda(copie.id_comanda)///aici nu modificam urmatorul_id pentru ca atunci cand adaug in main in coada imi incrementeaza iar id ul.
 {
     data_primire=copie.data_primire;
     durata_solutionare=copie.durata_solutionare;
@@ -55,14 +56,13 @@ float comanda:: calcul_val_finala() const
 comanda::comanda(tm data, const vector<produs*> prod):id_comanda(urmatorul_id++), data_primire(data)
 {
     durata_solutionare.tm_min=0;
-    durata_solutionare.tm_hour=0;
     for(const auto& produs:prod)
     {
         produse.push_back(produs->copie());
         if(dynamic_cast<disc*>(produs) || dynamic_cast<disc_vintage*>(produs))
-            durata_solutionare.tm_min+=15;
+            durata_solutionare.tm_min+=2;
         else
-            durata_solutionare.tm_min+=30;      
+            durata_solutionare.tm_min+=5;      
     }
     valoare_de_baza=calcul_val_baza();
     valoare_finala = calcul_val_finala();
@@ -100,4 +100,22 @@ comanda::~comanda()
     for(auto& produs:produse) 
         delete produs;
     produse.clear();
+}
+
+int comanda:: get_id() const
+{
+    return id_comanda;
+}
+
+int comanda:: get_durata() const
+{
+    int durata=durata_solutionare.tm_min;
+    return durata;
+
+}
+
+void comanda::decrementare_durata() 
+{
+    if(durata_solutionare.tm_min>0) 
+        durata_solutionare.tm_min--;
 }

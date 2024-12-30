@@ -1,4 +1,5 @@
 #include "disc.h"
+#pragma once
 
 class disc_vintage: public disc
 {

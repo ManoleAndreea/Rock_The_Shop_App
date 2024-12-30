@@ -62,3 +62,21 @@ float produs::get_pret_baza() const
 {
     return pret_baza;
 }
+
+void produs::scade_stoc(int nr)
+{
+    if(nr<=stoc)
+        stoc-=nr;
+    else
+        cout << "\n NU SUNT DISPONIBILE ATATEA PRODUSE DIN ACEST TIP!\n";
+}
+
+string produs::get_denumire()const
+{
+    return denumire;
+}
+
+int produs::get_stoc() const
+{
+    return stoc;
+}

@@ -1,4 +1,5 @@
 #include "angajat.h"
+#pragma once
 
 class asistent: public angajat
 {

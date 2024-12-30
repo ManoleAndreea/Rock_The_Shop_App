@@ -4,18 +4,21 @@
 #include <vector>
 #include <typeinfo>
 #include "gestiune.h"
-
-
+#include "comanda.h"
+#include <algorithm>
 
 ifstream fin("angajati.txt");
 ifstream finn("produse.txt");
+ifstream gin("comenzi.txt");
 
 gestiune<angajat*> angajati;
 gestiune<produs*>produse;
+queue<comanda> coada_comenzi;
+vector<operatorr*> operatori;
 
 void populare_produse()
 {
-    for(int i=0; i<7; i++)
+    for(int i=0; i<10; i++)
     {
         string den;
         float pret;
@@ -95,7 +98,8 @@ void populare_angajati()
                     fin >> nume >> prenume >> cnp >> data.tm_year >> data.tm_mon >> data.tm_mday;
                     operatorr* op = new operatorr(nume, prenume, cnp, data);
                     angajati.adauga(op);
-                    op->adaugare_comanda_procesata(1000);
+                    operatori.push_back(op);
+                   // op->adaugare_comanda_procesata(1000);
                 }
                 else
                     cout <<"Lista nu e buna!"<<endl;
@@ -205,7 +209,10 @@ void adaugare_angajat()
         cin >> data.tm_year >> data.tm_mon >> data.tm_mday;
 
         if(tip=="Operator")
-                angajati.adauga(new operatorr(nume, prenume, cnp, data));
+        {
+            angajati.adauga(new operatorr(nume, prenume, cnp, data));
+            operatori.push_back(new operatorr(nume, prenume, cnp, data));   
+        }
         else
             if(tip=="Manager")
                 angajati.adauga(new manager(nume, prenume, cnp, data));
@@ -498,6 +505,99 @@ void gestiune_produse()
     }
 
 }
+
+bool exista_comenzi_in_proces()
+{
+    for(auto& op:operatori) 
+        if (op->get_numar_comenzi()) 
+            return true;
+        
+    return false;
+}
+void procesare_comenzi()
+{
+    
+
+    for(int i=0; i<19; i++)
+    {
+        int nr_produse;
+        gin >> nr_produse;
+        if(nr_produse>8)
+            cout << "\n\n     Comanda este prea mare!\n";
+        else
+        {
+            vector<produs*>lista;
+            int nr_tip_produse;
+            gin >> nr_tip_produse;
+            for(int j=0; j<nr_tip_produse; j++)
+            {
+                string x;///cod unic pentru produsul respectiv
+                gin >> x;
+                int nr_prod;
+                gin >> nr_prod;
+                produs* it=produse.cauta("COD", x);
+                if(it==nullptr)
+                    cout << "\n\n     Produsul cu codul " << x << " nu exista în stoc!\n";
+                else
+                {
+                       if(nr_prod>it->get_stoc())
+                            cout <<  "\n\n      Nu avem atatea exemplare din acelasi model gen ;) \n";
+                        else
+                            {
+                                it->scade_stoc(nr_prod);
+                                lista.push_back(it->copie());
+
+                            }
+                }
+            }
+            int luna, zi, ora, minut;
+            gin >> luna >> zi >> ora >> minut;
+            tm data;
+            data.tm_mon=luna-1;
+            data.tm_mday=zi;
+            data.tm_hour=ora;
+            data.tm_min=minut;
+            comanda aux(data, lista);
+            aux.afisare();
+            coada_comenzi.push(aux);
+            cout <<"\n\n\n\n";
+        }
+
+    }
+    int timp_global=0; ///voi folosi acest timp pentru a simula o procesare in timp real. fiecare incrementare cu 1 va reprezenta un minut
+    while(!coada_comenzi.empty() || exista_comenzi_in_proces())
+    {
+        if(!coada_comenzi.empty())
+        {
+            
+            comanda actuala=coada_comenzi.front();
+            int minim=4;
+            operatorr* copie;
+            for(auto& op:operatori)
+            {
+                if(op->get_numar_comenzi()<minim)
+                {
+                    minim=op->get_numar_comenzi();
+                    copie=op;
+                }            
+            }///asignam comanda actuala operatorului care are cele mai putine comenzi
+            if(minim>=3)
+                cout << "\n     [Timp: " << timp_global << "] NU exista operatori disponibili. Comenzile raman în asteptare.\n";
+            else
+                {
+                    copie->asignare_comanda(actuala);
+                    coada_comenzi.pop();
+                }
+        }
+        for(auto& op:operatori) 
+            op->proceseaza_comenzi(timp_global);
+        timp_global++;
+        cout <<"\n          --------------------            \n";
+    }
+    cout << "\n\n     Toate comenzile au fost procesate!\n";
+    
+}
+
 int main()
 {
     try
@@ -513,6 +613,9 @@ int main()
         else
             if(var==2)
                 gestiune_produse();
+            else
+                if(var==3)
+                    procesare_comenzi();
 
 
     }

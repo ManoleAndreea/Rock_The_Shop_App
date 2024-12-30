@@ -31,7 +31,7 @@ class angajat
         virtual angajat& operator=(const angajat&);
         virtual string get_cnp() const;
         virtual int get_id() const;
-        
+        virtual string get_nume() const;
 
 
 };

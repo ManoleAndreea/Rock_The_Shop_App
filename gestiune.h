@@ -7,9 +7,6 @@
 #include "manager.h"
 #include "operatorr.h"
 #include "asistent.h"
-#include "articol_vestimentar.h"
-#include "disc.h"
-#include "disc_vintage.h"
 #pragma once
 
 using namespace std;

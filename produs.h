@@ -22,9 +22,11 @@ class produs
         virtual void afisare() const=0;
         virtual float calcul_pret_final() const=0;
         int get_cod() const;
+        int get_stoc() const;
+        string get_denumire() const;
         float get_pret_baza() const;
         void set_denumire(string &);
         void set_pret(float);
         virtual produs* copie() const=0;
-
+        void scade_stoc(int);
 };

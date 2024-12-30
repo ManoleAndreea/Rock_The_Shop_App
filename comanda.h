@@ -13,7 +13,7 @@ class comanda
     static int urmatorul_id;
     const int id_comanda;
     tm durata_solutionare;///o sa fie calculata in functie de numarul de produse din lista comenzii
-    /// o sa iau 30 de minute pentru fiecare articol vestimentar, 15 minute pentru discuri si discuri vintage
+    /// o sa iau 5 de minute pentru fiecare articol vestimentar, 2 minute pentru discuri si discuri vintage
     tm data_primire;
     float valoare_de_baza;
     float valoare_finala;
@@ -29,4 +29,7 @@ class comanda
         void afisare() const;
         ~comanda();
         bool validare() const;
+        int get_id() const;
+        int get_durata() const;
+        void decrementare_durata();
 };
