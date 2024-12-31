@@ -14,7 +14,7 @@ class angajat
     tm data_angajare; // face parte in ctime este un struct
     //tm_year: Anul minus 1900 (de exemplu, pentru 2024, valoarea este 2024 - 1900 = 124)
     //tm_mon: Luna din an (0 pentru ianuarie, 11 pentru decembrie)
-    //tm_mday: Ziua din lună (1–31)
+    //tm_mday: Ziua din luna (1–31)
 
 
     public:
