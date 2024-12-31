@@ -223,7 +223,6 @@ void adaugare_angajat()
         
 
 }
-
 void stergere_angajat()
 {
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
@@ -258,8 +257,6 @@ void stergere_angajat()
     
 
 }
-
-
 void detalii_angajat()
 {
 	cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
@@ -595,9 +592,75 @@ void procesare_comenzi()
         cout <<"\n          --------------------            \n";
     }
     cout << "\n\n     Toate comenzile au fost procesate!\n";
+    meniu_principal();
     
 }
 
+void rapoarte()
+{
+     int var=1;
+        while(var)
+        {
+            cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+
+            cout << " \n\n       Doresti sa aflii:\n\n      - (1) Angajatul cu cele mai multe comenzi procesate?\n      - (2) Top 3 angajati care au gestionat cele mai valoroase comenzi?\n      - (3) Top 3 angajați cu cel mai mare salariu în luna curentă?\n      - (0) Sa te intorci la meniul principal?\n   ";
+
+            cin >> var;
+
+            cout << "---------------------------------------------------------------------------------------------------------------------------" <<'\n';
+            if(var==1)
+            {
+                auto max_comenzi=*max_element(operatori.begin(), operatori.end(), [](const operatorr* a, const operatorr* b)
+                {
+                    return a->get_numar_comenzi_procesate()<b->get_numar_comenzi_procesate();
+                });
+
+            ofstream fout("raport1.csv");
+            fout << "Nume,Comenzi Procesate\n";
+            fout <<  max_comenzi->get_nume() << "," << max_comenzi->get_numar_comenzi_procesate() << endl;
+            fout.close();
+            }
+            else
+                if(var==2)
+                {
+                    vector<operatorr*>operatori_sortati=operatori;
+                    sort(operatori_sortati.begin(), operatori_sortati.end(), [](const operatorr* a, const operatorr* b) 
+                    {
+                        return a->get_valoare_comenzi()>b->get_valoare_comenzi();
+                    });
+                    ofstream fout("raport2.csv");
+                    fout << "Nume,Valoare Comenzi\n";
+                    for(size_t i=0; i<min((size_t)3, operatori_sortati.size()); i++) 
+                    {
+                        fout << operatori_sortati[i]->get_nume()<< ","<< operatori_sortati[i]->get_valoare_comenzi() << "\n";
+                     }
+                    fout.close();
+
+                } 
+                else
+                    if(var==3)
+                    {
+                        vector<operatorr*>operatori_sortati=operatori;
+                        sort(operatori_sortati.begin(), operatori_sortati.end(), [](const operatorr* a, const operatorr* b) 
+                        {
+                            if(a->calcul_salariu()==b->calcul_salariu())
+                                if(a->get_nume()==b->get_nume())
+                                    return a->get_prenume()<b->get_prenume();
+                                else 
+                                    return a->get_nume()<b->get_nume();
+                            return a->calcul_salariu()>b->calcul_salariu();
+                        
+                        });
+                        ofstream fout("raport3.csv");
+                        fout << "Nume,Prenume,Salariu\n";
+                        for (size_t i=0; i<min((size_t)3, operatori_sortati.size()); i++) 
+                            fout << operatori_sortati[i]->get_nume() << "," << operatori_sortati[i]->get_prenume() << ","<< operatori_sortati[i]->calcul_salariu() << "\n";
+                
+                fout.close();
+
+                    } 
+        } 
+}
 int main()
 {
     try
@@ -606,16 +669,24 @@ int main()
         populare_produse();
         ecran_principal_logo();
         meniu_principal();
-        int var;
-        cin >> var;
-        if(var==1)
-            gestiune_angajati();
-        else
-            if(var==2)
-                gestiune_produse();
+        int var=1;
+        while(var)
+        {
+            cin >> var;
+            if(var==1)
+                gestiune_angajati();
             else
-                if(var==3)
-                    procesare_comenzi();
+                if(var==2)
+                    gestiune_produse();
+                else
+                    if(var==3)
+                        procesare_comenzi();
+                    else
+                        if(var==4)
+                            rapoarte();
+
+        }
+        
 
 
     }

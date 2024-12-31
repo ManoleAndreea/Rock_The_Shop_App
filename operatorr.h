@@ -7,6 +7,7 @@ class operatorr: public angajat
 {
     float valoare_comenzi_procesate=0;
     queue<comanda> comenzi_asignate;
+    int nr_comenzi_procesate=0;
 
     public:
         operatorr();
@@ -21,5 +22,8 @@ class operatorr: public angajat
         void asignare_comanda(const comanda&);
         void proceseaza_comenzi(int);
         size_t get_numar_comenzi() const;
+        int get_numar_comenzi_procesate() const;
+        float get_valoare_comenzi() const;
+        
 
 };

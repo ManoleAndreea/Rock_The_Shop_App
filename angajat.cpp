@@ -86,3 +86,8 @@ string angajat::get_nume() const
 {
     return nume;
 }
+
+string angajat:: get_prenume() const
+{
+    return prenume;
+}

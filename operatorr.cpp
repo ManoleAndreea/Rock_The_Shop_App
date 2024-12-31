@@ -51,6 +51,8 @@ void operatorr:: proceseaza_comenzi(int timp_global)
         if(actuala.get_durata()<=0)
          {
             cout << "[Timp: " << timp_global << "] Operatorul " << get_nume() << " a finalizat comanda ID: " << actuala.get_id() << ".\n";
+            nr_comenzi_procesate++;
+            valoare_comenzi_procesate+=actuala.calcul_val_finala();
             comenzi_asignate.pop();
         }
     } 
@@ -66,4 +68,14 @@ void operatorr::asignare_comanda(const comanda &c)
     comenzi_asignate.push(c);
    
     cout << "Operatorul "<<get_nume()<< " a preluat comanda ID: " << c.get_id() << "\n";
+}
+
+int operatorr::get_numar_comenzi_procesate() const
+{
+    return nr_comenzi_procesate;
+}
+
+float operatorr::get_valoare_comenzi()const
+{
+    return valoare_comenzi_procesate;
 }

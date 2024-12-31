@@ -32,6 +32,7 @@ class angajat
         virtual string get_cnp() const;
         virtual int get_id() const;
         virtual string get_nume() const;
+        virtual string get_prenume() const;
 
 
 };
