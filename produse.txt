@@ -8,3 +8,5 @@ Articol_Vestimentar Sapca_Queen 50 200 Gri Muziker
 Articol_Vestimentar Pantaloni_de_moshpit 500 30 Camo_verde Magazinul_meu
 Disc Discul_meu 500 2 Casa_de_productie_a_cerurilor God Impotriva_lui_Marylin_Manson cd 2050 10 31
 Articol_Vestimentar Pantofi_cu_tepi 450 30 argintiu_stralucitor Motanul_Incaltat_SRL
+Articol_Vestimentar Ceva_ieftin 10 1000 maro Rebu_SRL
+Disc Disc_pentru_test 180 10 ar_trebui_sa_mi_dea_eroare Andreea Incercare_proiect_poo cd 2024 12 31

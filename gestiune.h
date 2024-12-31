@@ -25,7 +25,18 @@ class gestiune
 
         void adauga(T entitate) 
         {
+            if constexpr(is_base_of<angajat, typename remove_pointer<T>::type>::value) 
+                if (exista_cnp(entitate->get_cnp())) 
+                    throw invalid_argument("CNP-ul introdus este deja utilizat!");
+        
             entitati.push_back(entitate);
+        }
+        bool exista_cnp(const string& cnp) const 
+        {
+            return any_of(entitati.begin(), entitati.end(), [&](const T& angajat) 
+            {
+                return angajat->get_cnp()==cnp;
+            });
         }
 
         T cauta(const string& criteriu, const string& valoare) const 
@@ -159,7 +170,7 @@ class gestiune
 
             delete *it;
             entitati.erase(it);
-            std::cout << "Elementul care respectă criteriul a fost sters!\n";
+            cout << "Elementul care respectă criteriul a fost sters!\n";
         }
 
 
@@ -168,6 +179,10 @@ class gestiune
             for (const auto& entitate:entitati) 
                 entitate->afisare();
             
+        }
+        const vector<T>& get_entitati() const 
+        {
+            return entitati;
         }
 
         ~gestiune() 

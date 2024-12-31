@@ -22,6 +22,8 @@ void disc::afisare() const
     produs::afisare();
 }
 
+
+
 disc* disc::copie() const
 {
     return new disc(*this);

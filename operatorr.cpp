@@ -46,18 +46,18 @@ void operatorr:: proceseaza_comenzi(int timp_global)
         comanda& actuala=comenzi_asignate.front();
         int durata=actuala.get_durata();
         actuala.decrementare_durata();
-        cout << "[Timp: " << timp_global << "] Operatorul " << get_nume() << " proceseaza comanda ID: " << actuala.get_id() << ". Timp ramas: " << actuala.get_durata() << " minute.\n";
+        cout << "Timp: " << timp_global << "--> Operatorul " << get_nume() << " proceseaza comanda ID: " << actuala.get_id() << ". Timp ramas: " << actuala.get_durata() << " minute.\n";
 
         if(actuala.get_durata()<=0)
          {
-            cout << "[Timp: " << timp_global << "] Operatorul " << get_nume() << " a finalizat comanda ID: " << actuala.get_id() << ".\n";
+            cout << "Timp: " << timp_global << "--> Operatorul " << get_nume() << " a finalizat comanda ID: " << actuala.get_id() << ".\n";
             nr_comenzi_procesate++;
             valoare_comenzi_procesate+=actuala.calcul_val_finala();
             comenzi_asignate.pop();
         }
     } 
     else 
-        cout << "[Timp: " << timp_global << "] Operatorul " << get_nume() << " este inactiv.\n";
+        cout << "Timp: " << timp_global << "--> Operatorul " << get_nume() << " este inactiv.\n";
     
 }
 

@@ -64,6 +64,8 @@ comanda::comanda(tm data, const vector<produs*> prod):id_comanda(urmatorul_id++)
         else
             durata_solutionare.tm_min+=5;      
     }
+    if(!validare())
+        throw length_error("COMANDA TREBUIE SA AIBA MAXIM 3 ARTICOLE VESTIMENTARE SI MAXIM 5 DISCURI");
     valoare_de_baza=calcul_val_baza();
     valoare_finala = calcul_val_finala();
 }

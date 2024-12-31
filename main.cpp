@@ -1,5 +1,3 @@
-
-#include "stergere.h"
 #include <fstream>
 #include <vector>
 #include <typeinfo>
@@ -18,7 +16,7 @@ vector<operatorr*> operatori;
 
 void populare_produse()
 {
-    for(int i=0; i<10; i++)
+    for(int i=0; i<12; i++)
     {
         string den;
         float pret;
@@ -65,7 +63,7 @@ void populare_produse()
                 }
 
     }
-    produse.afisare();
+    //produse.afisare();
 }
 
 
@@ -98,14 +96,12 @@ void populare_angajati()
                     fin >> nume >> prenume >> cnp >> data.tm_year >> data.tm_mon >> data.tm_mday;
                     operatorr* op = new operatorr(nume, prenume, cnp, data);
                     angajati.adauga(op);
-                    operatori.push_back(op);
-                   // op->adaugare_comanda_procesata(1000);
                 }
                 else
                     cout <<"Lista nu e buna!"<<endl;
     }
 
-    angajati.afisare();
+    //angajati.afisare();
 }
 
 void ecran_principal_logo()
@@ -182,8 +178,7 @@ void adaugare_angajat()
                     if (sex==3 || sex==4) 
                         secol=1800;
             an+=secol;
-            cout << "!!! "<<an << endl;
-            tm data_nastere={};
+            tm data_nastere;
             data_nastere.tm_year=an-1900;
             data_nastere.tm_mon=luna-1;
             data_nastere.tm_mday=zi;
@@ -191,27 +186,24 @@ void adaugare_angajat()
             time_t t=time(nullptr);
             tm* data_curenta=localtime(&t);
 
-            int varsta = data_curenta->tm_year + 1900 - an;
-            cout << "---" << varsta << endl;
+            int varsta=data_curenta->tm_year+1900-an;
             if ((data_curenta->tm_mon<data_nastere.tm_mon) || (data_curenta->tm_mon==data_nastere.tm_mon && data_curenta->tm_mday<data_nastere.tm_mday)) 
                 varsta--;
-            cout << "---" << varsta << endl;
 
-                if(varsta>=18)
-                    return true;    
-                return false;
+            if(varsta>=18)
+                return true;    
+            return false;
         };
 
         if(!verificare_major(cnp))
             throw invalid_argument("Angajatul nu este major!");
-        cout << "\n      Si data la care a fost angajat(AA LL ZZ): ";
+        cout << "\n      Si data la care a fost angajat(AAAA LL ZZ): ";
         tm data;
         cin >> data.tm_year >> data.tm_mon >> data.tm_mday;
 
         if(tip=="Operator")
         {
             angajati.adauga(new operatorr(nume, prenume, cnp, data));
-            operatori.push_back(new operatorr(nume, prenume, cnp, data));   
         }
         else
             if(tip=="Manager")
@@ -513,14 +505,20 @@ bool exista_comenzi_in_proces()
 }
 void procesare_comenzi()
 {
-    
+    for(auto& angajat:angajati.get_entitati())     
+        if(auto op=dynamic_cast<operatorr*>(angajat)) 
+            operatori.push_back(op);
 
     for(int i=0; i<19; i++)
     {
         int nr_produse;
         gin >> nr_produse;
         if(nr_produse>8)
-            cout << "\n\n     Comanda este prea mare!\n";
+        {
+            cout << nr_produse<< endl;
+            throw length_error("Comanda este prea mare!\n");
+
+        }
         else
         {
             vector<produs*>lista;
@@ -534,16 +532,15 @@ void procesare_comenzi()
                 gin >> nr_prod;
                 produs* it=produse.cauta("COD", x);
                 if(it==nullptr)
-                    cout << "\n\n     Produsul cu codul " << x << " nu exista în stoc!\n";
+                    throw invalid_argument("Produsul cautat nu exista în stoc!");
                 else
                 {
                        if(nr_prod>it->get_stoc())
-                            cout <<  "\n\n      Nu avem atatea exemplare din acelasi model gen ;) \n";
+                            throw invalid_argument("Nu avem atatea exemplare din acelasi model!");
                         else
                             {
                                 it->scade_stoc(nr_prod);
                                 lista.push_back(it->copie());
-
                             }
                 }
             }
@@ -557,7 +554,6 @@ void procesare_comenzi()
             comanda aux(data, lista);
             aux.afisare();
             coada_comenzi.push(aux);
-            cout <<"\n\n\n\n";
         }
 
     }
@@ -579,7 +575,7 @@ void procesare_comenzi()
                 }            
             }///asignam comanda actuala operatorului care are cele mai putine comenzi
             if(minim>=3)
-                cout << "\n     [Timp: " << timp_global << "] NU exista operatori disponibili. Comenzile raman în asteptare.\n";
+                cout << "\n     Timp: " << timp_global << "--> NU exista operatori disponibili. Comenzile raman în asteptare.\n";
             else
                 {
                     copie->asignare_comanda(actuala);
@@ -616,8 +612,8 @@ void rapoarte()
                 });
 
             ofstream fout("raport1.csv");
-            fout << "Nume,Comenzi Procesate\n";
-            fout <<  max_comenzi->get_nume() << "," << max_comenzi->get_numar_comenzi_procesate() << endl;
+            fout << "Nume,Prenume,Comenzi Procesate\n";
+            fout <<  max_comenzi->get_nume() << "," << max_comenzi->get_prenume() << "," << max_comenzi->get_numar_comenzi_procesate() << endl;
             fout.close();
             }
             else
@@ -629,10 +625,10 @@ void rapoarte()
                         return a->get_valoare_comenzi()>b->get_valoare_comenzi();
                     });
                     ofstream fout("raport2.csv");
-                    fout << "Nume,Valoare Comenzi\n";
+                    fout << "Nume,Prenume,Valoare Comenzi\n";
                     for(size_t i=0; i<min((size_t)3, operatori_sortati.size()); i++) 
                     {
-                        fout << operatori_sortati[i]->get_nume()<< ","<< operatori_sortati[i]->get_valoare_comenzi() << "\n";
+                        fout << operatori_sortati[i]->get_nume() << "," << operatori_sortati[i]->get_prenume()<< ","<< operatori_sortati[i]->get_valoare_comenzi() << "\n";
                      }
                     fout.close();
 
@@ -668,31 +664,39 @@ int main()
         populare_angajati();
         populare_produse();
         ecran_principal_logo();
-        meniu_principal();
         int var=1;
+
         while(var)
         {
-            cin >> var;
-            if(var==1)
-                gestiune_angajati();
-            else
-                if(var==2)
-                    gestiune_produse();
-                else
-                    if(var==3)
-                        procesare_comenzi();
-                    else
-                        if(var==4)
-                            rapoarte();
-
+            try
+            {
+                meniu_principal();
+                cin >> var;
+                if(var==1)
+                    gestiune_angajati();
+                else 
+                    if(var==2)
+                        gestiune_produse();
+                    else 
+                        if(var==3)
+                            procesare_comenzi();
+                        else 
+                            if(var==4)
+                                rapoarte();
+                            else
+                                cout << "\n\n       Optiune invalida! \n";
+            }
+            catch (const exception &e)
+            {
+                cerr << "A aparut o eroare: " << e.what() << '\n';
+                cout << "Revenim la meniul principal...\n";
+            }
         }
-        
-
-
     }
-    catch(const exception& e)
+    catch (const exception &e)
     {
-        cerr << e.what() << '\n';
+        cerr << "Eroare fatala: " << e.what() << '\n';
     }
+
     
 }
